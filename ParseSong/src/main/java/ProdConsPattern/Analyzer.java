@@ -22,17 +22,13 @@ public class Analyzer {
                 @Override
                 public void run() {
                     while (!stop.get()) {
-                        try {
-                            final Integer poll = queue.poll(100, TimeUnit.MILLISECONDS);
-                            final Integer result = poll * 2;
-                            System.out.println(result);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+
+                        System.out.println("____________________");
                     }
                 }
             });
             this.analizers.submit(analizer);
         }
+
     }
 }

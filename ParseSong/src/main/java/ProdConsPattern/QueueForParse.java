@@ -1,34 +1,47 @@
 package ProdConsPattern;
 
 
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ProdConsPattern.Parsers.Parser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class QueueForParse {
     private final LinkedBlockingQueue<Integer> queue;
     private final AtomicBoolean stop;
 
     QueueForParse() {
-        this.stop =new AtomicBoolean(false);
+
+        this.stop = new AtomicBoolean(false);
         this.queue = new LinkedBlockingQueue<>();
     }
-    public void start(){
+
+
+
+
+
+    public void start() {
         final Parser parser = new Parser(queue, stop);
         final Analyzer analyzer = new Analyzer(queue, stop);
         parser.parsing();
         analyzer.analizing();
-        final  Timer timer = new Timer();
+        final Timer timer = new Timer();
         timer.schedule(new Stopper(), 1000);
     }
-    private class Stopper extends TimerTask{
+
+    private class Stopper extends TimerTask {
         @Override
-        public void run(){
+        public void run() {
             stop.set(true);
         }
     }
@@ -38,9 +51,6 @@ public class QueueForParse {
         begin.start();
     }
 }
-
-
-
 
 
 ///////////////////////////////////
