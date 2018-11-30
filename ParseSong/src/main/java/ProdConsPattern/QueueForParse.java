@@ -17,7 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class QueueForParse {
-    private final LinkedBlockingQueue<Integer> queue;
+    private final LinkedBlockingQueue<String> queue;
     private final AtomicBoolean stop;
 
     QueueForParse() {

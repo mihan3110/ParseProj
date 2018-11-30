@@ -4,11 +4,11 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Analyzer {
-    private final LinkedBlockingQueue<Integer> queue;
+    private final LinkedBlockingQueue<String> queue;
     private final ExecutorService analizers;
     private final AtomicBoolean stop;
 
-    public Analyzer(LinkedBlockingQueue<Integer> queue, AtomicBoolean stop) {
+    public Analyzer(LinkedBlockingQueue<String> queue, AtomicBoolean stop) {
         this.analizers = Executors.newFixedThreadPool(4);
 
         this.queue = queue;
@@ -22,8 +22,8 @@ public class Analyzer {
                 @Override
                 public void run() {
                     while (!stop.get()) {
-
-                        System.out.println("____________________");
+                        System.out.println(queue);
+                        //System.out.println("____________________");
                     }
                 }
             });
