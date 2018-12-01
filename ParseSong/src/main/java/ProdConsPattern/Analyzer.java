@@ -19,22 +19,12 @@ public class Analyzer {
     }
 
     void analizing() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             final Thread analizer = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (!stop.get()) {
-                        try(FileOutputStream fos=new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt"))
-                        {
-                            // перевод строки в байты
-                            byte[] buffer = queue.toString().getBytes();
 
-                            fos.write(buffer, 0, buffer.length);
-                        }
-                        catch(IOException ex){
-
-                            System.out.println(ex.getMessage());
-                        }
                         System.out.println(queue);
 
                         //System.out.println("____________________");
@@ -42,6 +32,7 @@ public class Analyzer {
                 }
             });
             this.analizers.submit(analizer);
+
         }
 
     }

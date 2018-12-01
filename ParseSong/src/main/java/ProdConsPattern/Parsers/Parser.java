@@ -19,7 +19,6 @@ public class Parser {
     private final ExecutorService parsers;
     private final AtomicBoolean stop;
     private final LinkedBlockingQueue<String> links;
-    Document song;
 
 
     public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links) {
@@ -55,34 +54,30 @@ public class Parser {
 
     public void parsing() {
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             final Thread parser = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     while (!stop.get()) {
 
-                        for (int j=1;j<parse(null)+1;j++){
-                            Document pag=null;
+                        for (int j = 1; j < parse(null) + 1; j++) {
+                            Document pag = null;
                             try {
-                                pag = Jsoup.connect("http://muzoton.ru/lastnews/page/"+j).get();
-                                Elements urls= pag.getElementsByClass("cell cellsong");
-                                queue.add(urls.html().replaceAll("<a href=\"","").replaceAll("\">.+",""));
-                               // links.add(urls.html().replaceAll("<a href=\"","").replaceAll("\">.+",""));
-                                //System.out.println(links);
-                               /* for(String ql:links){
+                                pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
+                                Elements urls = pag.getElementsByClass("cell cellsong");
+                                links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
+                                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
+                                    // перевод строки в байты
+                                    byte[] buffer = links.toString().replaceAll(",", "\n").getBytes();
 
-                                    try {
-                                        song= Jsoup.connect(ql).get();
-                                        queue.add(song.getElementsByClass("songtext").text());
-                                    } catch (IOException e) {
+                                    fos.write(buffer, 1, buffer.length - 2);
+                                } catch (IOException ex) {
 
-                                        e.printStackTrace();
-
-                                    }
+                                    System.out.println(ex.getMessage());
+                                }
 
 
-                                }*/
 
 
                             } catch (IOException e) {
@@ -92,6 +87,12 @@ public class Parser {
                             }
 
                         }
+
+
+
+                        
+
+
 
                         stop.set(true);
 
