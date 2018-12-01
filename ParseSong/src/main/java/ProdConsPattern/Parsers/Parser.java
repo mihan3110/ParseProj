@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -17,24 +18,18 @@ public class Parser {
     private final LinkedBlockingQueue<String> queue;
     private final ExecutorService parsers;
     private final AtomicBoolean stop;
-    private Set<String > links;
+    private final LinkedBlockingQueue<String> links;
+    Document song;
 
-    public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop) {
+
+    public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links) {
         this.parsers = Executors.newFixedThreadPool(4);
 
         this.queue = queue;
 
         this.stop = stop;
+        this.links = links;
     }
-
-
-
-
-
-
-
-
-
 
 
     static int parse(Document doc) {
@@ -53,51 +48,53 @@ public class Parser {
         while (matcher.find()) {
             words.add(matcher.group());
         }
-        int pageNumb =Integer.parseInt(words.get(words.size()-1));
+        int pageNumb = Integer.parseInt(words.get(words.size() - 1));
         return pageNumb;
     }
 
 
-
-
-
     public void parsing() {
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             final Thread parser = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     while (!stop.get()) {
 
-                        for (int j=1;j<parse(null)-1;j++){
-                            Document pag;
+                        for (int j=1;j<parse(null)+1;j++){
+                            Document pag=null;
                             try {
                                 pag = Jsoup.connect("http://muzoton.ru/lastnews/page/"+j).get();
                                 Elements urls= pag.getElementsByClass("cell cellsong");
-
                                 queue.add(urls.html().replaceAll("<a href=\"","").replaceAll("\">.+",""));
-                                //queue.addAll(links);
-                               /* for (Element nn: urls) {
-                                    queue.add(String.format(nn.attr("abs:href")));
+                               // links.add(urls.html().replaceAll("<a href=\"","").replaceAll("\">.+",""));
+                                //System.out.println(links);
+                               /* for(String ql:links){
+
+                                    try {
+                                        song= Jsoup.connect(ql).get();
+                                        queue.add(song.getElementsByClass("songtext").text());
+                                    } catch (IOException e) {
+
+                                        e.printStackTrace();
+
+                                    }
+
+
                                 }*/
-                                //urls=pag.getElementsByClass("row");
-                               // queue.add(urls.html());
+
 
                             } catch (IOException e) {
 
                                 e.printStackTrace();
 
                             }
+
                         }
 
-                        try {
-                            Thread.sleep(100);
+                        stop.set(true);
 
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
 
                     System.out.println("========================================");

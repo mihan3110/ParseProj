@@ -19,11 +19,13 @@ import org.jsoup.nodes.Document;
 public class QueueForParse {
     private final LinkedBlockingQueue<String> queue;
     private final AtomicBoolean stop;
+    private final LinkedBlockingQueue<String> links;
 
     QueueForParse() {
 
         this.stop = new AtomicBoolean(false);
         this.queue = new LinkedBlockingQueue<>();
+        this.links=new LinkedBlockingQueue<>();
     }
 
 
@@ -31,12 +33,12 @@ public class QueueForParse {
 
 
     public void start() {
-        final Parser parser = new Parser(queue, stop);
+        final Parser parser = new Parser(queue, stop, links);
         final Analyzer analyzer = new Analyzer(queue, stop);
         parser.parsing();
         analyzer.analizing();
         final Timer timer = new Timer();
-        timer.schedule(new Stopper(), 1000);
+        timer.schedule(new Stopper(), 100000);
     }
 
     private class Stopper extends TimerTask {
@@ -50,6 +52,7 @@ public class QueueForParse {
         QueueForParse begin = new QueueForParse();
         begin.start();
     }
+
 }
 
 
