@@ -5,8 +5,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,6 +21,7 @@ public class Parser {
     private final ExecutorService parsers;
     private final AtomicBoolean stop;
     private final LinkedBlockingQueue<String> links;
+    Document text;
 
 
     public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links) {
@@ -69,15 +72,13 @@ public class Parser {
                                 links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
                                 try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
                                     // перевод строки в байты
-                                    byte[] buffer = links.toString().replaceAll(",", "\n").getBytes();
+                                    byte[] buffer = links.toString().replaceAll(",", "\n").replaceAll(" ", "").getBytes();
 
                                     fos.write(buffer, 1, buffer.length - 2);
                                 } catch (IOException ex) {
 
                                     System.out.println(ex.getMessage());
                                 }
-
-
 
 
                             } catch (IOException e) {
@@ -89,12 +90,41 @@ public class Parser {
                         }
 
 
+                        Scanner file = null;
+                        try {
+                            file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
 
-                        
+                        while (file.hasNext()) {
+
+
+                            try {
+                                text = Jsoup.connect(file.nextLine()).get();
+                                queue.add(text.getElementsByClass("songtext").text());
+                                queue.add("\n");
+                                System.out.println(queue);
+                                /*try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
+                                    // перевод строки в байты
+                                    byte[] buffer = queue.toString().getBytes();
+
+                                    fos.write(buffer, 1, buffer.length - 2);
+                                } catch (IOException ex) {
+
+                                    System.out.println(ex.getMessage());
+                                }*/
+                            } catch (IOException e) {
+
+                                e.printStackTrace();
+
+                            }
+
+                        }
 
 
 
-                        stop.set(true);
+
 
                     }
 

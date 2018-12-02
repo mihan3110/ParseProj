@@ -25,7 +25,8 @@ public class Analyzer {
                 public void run() {
                     while (!stop.get()) {
 
-                        System.out.println(queue);
+
+                       // System.out.println(queue);
 
                         //System.out.println("____________________");
                     }

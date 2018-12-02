@@ -38,7 +38,7 @@ public class QueueForParse {
         parser.parsing();
         analyzer.analizing();
         final Timer timer = new Timer();
-        timer.schedule(new Stopper(), 100000);
+        timer.schedule(new Stopper(), 1000);
     }
 
     private class Stopper extends TimerTask {
