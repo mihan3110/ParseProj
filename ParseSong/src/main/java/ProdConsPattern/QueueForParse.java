@@ -37,20 +37,23 @@ public class QueueForParse {
         final Analyzer analyzer = new Analyzer(queue, stop);
         parser.parsing();
         analyzer.analizing();
-        final Timer timer = new Timer();
-        timer.schedule(new Stopper(), 1000);
+        //final Timer timer = new Timer();
+      //  timer.schedule(new Stopper(), 1000);
     }
 
-    private class Stopper extends TimerTask {
+   /* private class Stopper extends TimerTask {
         @Override
         public void run() {
             stop.set(true);
         }
-    }
+    }*/
 
     public static void main(String[] args) {
         QueueForParse begin = new QueueForParse();
         begin.start();
+
+
+
     }
 
 }

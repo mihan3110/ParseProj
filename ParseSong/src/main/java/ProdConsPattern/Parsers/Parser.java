@@ -57,55 +57,51 @@ public class Parser {
 
     public void parsing() {
 
-        for (int i = 0; i < 1; i++) {
-            final Thread parser = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    while (!stop.get()) {
-
-                        for (int j = 1; j < parse(null) + 1; j++) {
-                            Document pag = null;
-                            try {
-                                pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
-                                Elements urls = pag.getElementsByClass("cell cellsong");
-                                links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
-                                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
-                                    // перевод строки в байты
-                                    byte[] buffer = links.toString().replaceAll(",", "\n").replaceAll(" ", "").getBytes();
-
-                                    fos.write(buffer, 1, buffer.length - 2);
-                                } catch (IOException ex) {
-
-                                    System.out.println(ex.getMessage());
-                                }
 
 
-                            } catch (IOException e) {
+        for (int j = 1; j <4;j++){             // parse(null) + 1; j++) {
+            Document pag = null;
+            try {
+                pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
+                Elements urls = pag.getElementsByClass("cell cellsong");
+                links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
+                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
+                    // перевод строки в байты
+                    byte[] buffer = links.toString().replaceAll(",", "\n").replaceAll(" ", "").getBytes();
 
-                                e.printStackTrace();
+                    fos.write(buffer, 1, buffer.length - 2);
+                } catch (IOException ex) {
 
-                            }
-
-                        }
-
-
-                        Scanner file = null;
-                        try {
-                            file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        while (file.hasNext()) {
+                    System.out.println(ex.getMessage());
+                }
 
 
-                            try {
-                                text = Jsoup.connect(file.nextLine()).get();
-                                queue.add(text.getElementsByClass("songtext").text());
-                                queue.add("\n");
-                                System.out.println(queue);
-                                /*try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
+
+
+
+        Scanner file = null;
+        try {
+            file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        while (file.hasNext()) {
+
+
+            try {
+                text = Jsoup.connect(file.nextLine()).get();
+                queue.add(text.getElementsByTag("h1").text()+"$"+text.getElementsByClass("songtext").text()+"\n");
+
+
+                                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
                                     // перевод строки в байты
                                     byte[] buffer = queue.toString().getBytes();
 
@@ -113,15 +109,24 @@ public class Parser {
                                 } catch (IOException ex) {
 
                                     System.out.println(ex.getMessage());
-                                }*/
-                            } catch (IOException e) {
+                                }
+            } catch (IOException e) {
 
-                                e.printStackTrace();
+                e.printStackTrace();
 
-                            }
+            }
 
-                        }
+        }
+        file.close();
+    }
+}
 
+        /*for (int i = 0; i < 1; i++) {
+            final Thread parser = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    while (!stop.get()) {
 
 
 
@@ -132,9 +137,9 @@ public class Parser {
                 }
             });
             this.parsers.submit(parser);
-        }
-    }
-}
+            Thread.interrupted();
+        }*/
+
 
 
 
