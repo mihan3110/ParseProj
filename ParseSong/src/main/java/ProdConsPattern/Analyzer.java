@@ -8,13 +8,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Analyzer {
     private final LinkedBlockingQueue<String> queue;
+    private final LinkedBlockingQueue<String> name;
     // private final ExecutorService analizers;
     private final AtomicBoolean stop;
 
-    public Analyzer(LinkedBlockingQueue<String> queue, AtomicBoolean stop) {
+    //Map<String, Integer> sontex = new LinkedHashMap<String, Integer>();
+    Map<String, Map<String, Integer>> sontex = new LinkedHashMap<>();
+
+
+    public Analyzer(LinkedBlockingQueue<String> queue, LinkedBlockingQueue<String> name, AtomicBoolean stop) {
         //  this.analizers = Executors.newFixedThreadPool(4);
 
         this.queue = queue;
+        this.name = name;
 
         this.stop = stop;
     }
@@ -25,32 +31,56 @@ public class Analyzer {
 
         // System.out.println(queue);
         for (int str = 0; str < queue.size(); str++) {
+            LinkedHashMap<String, Integer> occurrences = new LinkedHashMap<String, Integer>();
 
-            Map<String, Integer> occurrences = new HashMap<String, Integer>();
 
-            for ( String word : queue.peek().split(" ") ) {
+            for (String word : queue.peek().toLowerCase().split(" ")) {
                 Integer oldCount = occurrences.get(word);
-                if ( oldCount == null ) {
+                if (oldCount == null) {
                     oldCount = 0;
                 }
-                occurrences.put(word, oldCount + 1);
+                if (word.length() > 3)
+                    occurrences.put(word, oldCount + 1);
+
             }
+
+            List<Map.Entry<String, Integer>> entries =
+                    new ArrayList<Map.Entry<String, Integer>>(occurrences.entrySet());
+            Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+                public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
+                    return a.getValue().compareTo(b.getValue());
+                }
+            });
+
+            Collections.reverse(entries);
+
+            Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+            for (Map.Entry<String, Integer> entry : entries) {
+                sortedMap.put(entry.getKey(), entry.getValue());
+            }
+            Map<String, Integer> endMap = new LinkedHashMap<String, Integer>();
+
+            endMap.putAll(sortedMap);
+
+
+            sontex.put(name.peek(), endMap);
+
+            name.poll();
             queue.poll();
 
 
-            try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
-                // перевод строки в байты
-                byte[] buffer = occurrences.toString().replaceAll(",", "\n").replaceAll(" ", "").getBytes();
-
-                fos.write(buffer, 1, buffer.length - 2);
-            } catch (IOException ex) {
-
-                System.out.println(ex.getMessage());
-            }
-
-
         }
-        // System.out.println(lst);
+
+        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
+            // перевод строки в байты
+            byte[] buffer = sontex.toString().getBytes();
+
+            fos.write(buffer, 1, buffer.length - 2);
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
+        }
+
     }
 }
 

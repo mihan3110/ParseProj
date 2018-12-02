@@ -18,17 +18,18 @@ import java.util.regex.Pattern;
 
 public class Parser {
     private final LinkedBlockingQueue<String> queue;
+    private final LinkedBlockingQueue<String> name;
     private final ExecutorService parsers;
     private final AtomicBoolean stop;
     private final LinkedBlockingQueue<String> links;
     Document text;
 
 
-    public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links) {
+    public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links, LinkedBlockingQueue<String> name) {
         this.parsers = Executors.newFixedThreadPool(4);
 
         this.queue = queue;
-
+        this.name = name;
         this.stop = stop;
         this.links = links;
     }
@@ -58,8 +59,7 @@ public class Parser {
     public void parsing() {
 
 
-
-        for (int j = 1; j <4;j++){             // parse(null) + 1; j++) {
+        for (int j = 1; j < 2; j++) {             // parse(null) + 1; j++) {
             Document pag = null;
             try {
                 pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
@@ -85,7 +85,6 @@ public class Parser {
         }
 
 
-
         Scanner file = null;
         try {
             file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
@@ -98,18 +97,21 @@ public class Parser {
 
             try {
                 text = Jsoup.connect(file.nextLine()).get();
-                queue.add(text.getElementsByTag("h1").text()+"$"+text.getElementsByClass("songtext").text()+"\n");
+                name.add(text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
+                queue.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#$%“”@&)…(\"\\]«—\\[»]", "").replaceAll(",|-", ""));
 
 
-                                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
-                                    // перевод строки в байты
-                                    byte[] buffer = queue.toString().getBytes();
+                queue.remove("");
 
-                                    fos.write(buffer, 1, buffer.length - 2);
-                                } catch (IOException ex) {
+                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
+                    // перевод строки в байты
+                    byte[] buffer = queue.toString().getBytes();
 
-                                    System.out.println(ex.getMessage());
-                                }
+                    fos.write(buffer, 1, buffer.length - 2);
+                } catch (IOException ex) {
+
+                    System.out.println(ex.getMessage());
+                }
             } catch (IOException e) {
 
                 e.printStackTrace();
