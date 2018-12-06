@@ -1,5 +1,7 @@
 package ProdConsPattern;
 
+import ProdConsPattern.entities.Song;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -7,34 +9,47 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Analyzer {
-    private final LinkedBlockingQueue<String> queue;
-    private final LinkedBlockingQueue<String> name;
-    // private final ExecutorService analizers;
-    private final AtomicBoolean stop;
+    private final LinkedBlockingQueue<Song> queue;
+
+
+    //private final ExecutorService analizers;
+
 
     //Map<String, Integer> sontex = new LinkedHashMap<String, Integer>();
     Map<String, Map<String, Integer>> sontex = new LinkedHashMap<>();
 
 
-    public Analyzer(LinkedBlockingQueue<String> queue, LinkedBlockingQueue<String> name, AtomicBoolean stop) {
+    public Analyzer(LinkedBlockingQueue<Song> queue) {
         //  this.analizers = Executors.newFixedThreadPool(4);
 
         this.queue = queue;
-        this.name = name;
 
-        this.stop = stop;
     }
 
 
     void analizing() {
         List<String> lst = new ArrayList<>();
 
-        // System.out.println(queue);
+
+        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
+            // перевод строки в байты
+            byte[] buffer = sontex.toString().getBytes();
+
+            fos.write(buffer, 1, buffer.length - 2);
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
+        }
+
+    }
+}
+
+     /*   // System.out.println(queue);
         for (int str = 0; str < queue.size(); str++) {
             LinkedHashMap<String, Integer> occurrences = new LinkedHashMap<String, Integer>();
 
 
-            for (String word : queue.peek().toLowerCase().split(" ")) {
+            for (String word : queue.peek().toString().toLowerCase().split(" ")) {
                 Integer oldCount = occurrences.get(word);
                 if (oldCount == null) {
                     oldCount = 0;
@@ -63,9 +78,12 @@ public class Analyzer {
             endMap.putAll(sortedMap);
 
 
-            sontex.put(name.peek(), endMap);
+            sontex.put(endMap);
+         
 
-            name.poll();
+
+
+
             queue.poll();
 
 
@@ -79,10 +97,8 @@ public class Analyzer {
         } catch (IOException ex) {
 
             System.out.println(ex.getMessage());
-        }
+        }*/
 
-    }
-}
 
         /*for (int i = 0; i < 1; i++) {
             final Thread analizer = new Thread(new Runnable() {

@@ -1,5 +1,6 @@
 package ProdConsPattern.Parsers;
 
+import ProdConsPattern.entities.Song;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,64 +17,37 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Parser {
-    private final LinkedBlockingQueue<String> queue;
-    private final LinkedBlockingQueue<String> name;
-    private final ExecutorService parsers;
-    private final AtomicBoolean stop;
-    private final LinkedBlockingQueue<String> links;
+public class Parser implements Runnable {
+    private final LinkedBlockingQueue<Song> queue;
+    private List<String> links = new ArrayList<>();
+    private List<String> name = new ArrayList<>();
+    private List<String> song = new ArrayList<>();
+
+
     Document text;
+    private int numbPage;
 
-
-    public Parser(LinkedBlockingQueue<String> queue, AtomicBoolean stop, LinkedBlockingQueue<String> links, LinkedBlockingQueue<String> name) {
-        this.parsers = Executors.newFixedThreadPool(4);
+    public Parser(int i, LinkedBlockingQueue<Song> queue) {
+        this.numbPage = i;
 
         this.queue = queue;
-        this.name = name;
-        this.stop = stop;
-        this.links = links;
+
     }
 
 
-    static int parse(Document doc) {
-
-        try {
-            doc = Jsoup.connect("http://muzoton.ru/lastnews/").get();
-        } catch (IOException e) {
-// TODO Auto-generated catch block
-            e.printStackTrace();
-
-        }
-        String pages = doc.getElementById("dle-content").getElementsByTag("a").text();
-        Pattern pat = Pattern.compile("\\d+");
-        Matcher matcher = pat.matcher(pages);
-        List<String> words = new ArrayList<>();
-        while (matcher.find()) {
-            words.add(matcher.group());
-        }
-        int pageNumb = Integer.parseInt(words.get(words.size() - 1));
-        return pageNumb;
-    }
+    @Override
+    public void run() {
 
 
-    public void parsing() {
-
-
-        for (int j = 1; j < 2; j++) {             // parse(null) + 1; j++) {
+        for (int j = 1; j < 3; j++) {//parse(null) + 1; j++) {
             Document pag = null;
             try {
                 pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
                 Elements urls = pag.getElementsByClass("cell cellsong");
+
                 links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
-                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
-                    // перевод строки в байты
-                    byte[] buffer = links.toString().replaceAll(",", "\n").replaceAll(" ", "").getBytes();
 
-                    fos.write(buffer, 1, buffer.length - 2);
-                } catch (IOException ex) {
 
-                    System.out.println(ex.getMessage());
-                }
 
 
             } catch (IOException e) {
@@ -82,6 +56,15 @@ public class Parser {
 
             }
 
+        }
+        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
+            // перевод строки в байты
+            byte[] buffer = links.toString().getBytes();
+
+            fos.write(buffer, 1, buffer.length - 2);
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
         }
 
 
@@ -92,26 +75,17 @@ public class Parser {
             e.printStackTrace();
         }
 
+
         while (file.hasNext()) {
 
 
             try {
                 text = Jsoup.connect(file.nextLine()).get();
-                name.add(text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
-                queue.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#$%“”@&)…(\"\\]«—\\[»]", "").replaceAll(",|-", ""));
+
+                name.add("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
+                song.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", ""));
 
 
-                queue.remove("");
-
-                try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
-                    // перевод строки в байты
-                    byte[] buffer = queue.toString().getBytes();
-
-                    fos.write(buffer, 1, buffer.length - 2);
-                } catch (IOException ex) {
-
-                    System.out.println(ex.getMessage());
-                }
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -119,9 +93,23 @@ public class Parser {
             }
 
         }
+        for (int i = 0; i < name.size(); i++) {
+            queue.add(new Song(name.get(i), song.get(i)));
+        }
+
+        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
+            // перевод строки в байты
+            byte[] buffer = queue.toString().getBytes();
+
+            fos.write(buffer, 1, buffer.length - 2);
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
+        }
         file.close();
     }
 }
+
 
         /*for (int i = 0; i < 1; i++) {
             final Thread parser = new Thread(new Runnable() {
