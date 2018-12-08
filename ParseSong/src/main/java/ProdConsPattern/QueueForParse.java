@@ -60,7 +60,8 @@ public class QueueForParse {
           parsers.submit(new Runnable() {
               @Override
               public void run() {
-                  parser1.parsing();
+                  parser1.getLinks();
+                 // parser1.getText();
               }
           });
         }
