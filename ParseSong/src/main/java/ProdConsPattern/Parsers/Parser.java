@@ -20,10 +20,9 @@ import java.util.regex.Pattern;
 public class Parser {
     private final LinkedBlockingQueue<Song> queue;
     private List<String> links = new ArrayList<>();
-private Map<String, String> song = new HashMap<String, String>() {
-};
-   // private Queue<String> name; //= new ArrayList<>();
-   // private Queue<String> song;// = new ArrayList<>();
+
+    private List<String> name = new ArrayList<>();
+    private List<String> song = new ArrayList<>();
 
 
     Document text;
@@ -87,15 +86,10 @@ private Map<String, String> song = new HashMap<String, String>() {
 
             try {
                 text = Jsoup.connect(file.nextLine()).get();
-song.put("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""),text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", ""));
-              //  name.add();
-              //  song.add();
 
-               /* while (!name.isEmpty()) {
-                    queue.add(new Song(name.peek(), song.peek()));
-                    name.poll();
-                    song.poll();
-                }*/
+                name.add("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
+                song.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", ""));
+
 
             } catch (IOException e) {
 
@@ -105,11 +99,13 @@ song.put("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("те
 
         }
       //  System.out.println(name.get(0));
-
+        for (int i = 0; i < name.size(); i++) {
+            queue.add(new Song(name.get(i), song.get(i)));
+        }
       //  System.out.println(queue);
         try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
             // перевод строки в байты
-            byte[] buffer = song.toString().getBytes();
+            byte[] buffer = queue.toString().getBytes();
 
             fos.write(buffer, 1, buffer.length - 2);
         } catch (IOException ex) {
