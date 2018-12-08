@@ -17,9 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Parser implements Runnable {
+public class Parser {
     private final LinkedBlockingQueue<Song> queue;
-    private List<String> links = new ArrayList<>();
+    private Queue<String> links;
     private List<String> name = new ArrayList<>();
     private List<String> song = new ArrayList<>();
 
@@ -27,36 +27,37 @@ public class Parser implements Runnable {
     Document text;
     private int numbPage;
 
-    public Parser(int i, LinkedBlockingQueue<Song> queue) {
-        this.numbPage = i;
+
+    public Parser(int numbPage, LinkedBlockingQueue<Song> queue) {
+        this.numbPage = numbPage;
 
         this.queue = queue;
 
     }
 
 
-    @Override
-    public void run() {
+    public void parsing() {
 
 
-        for (int j = 1; j < 3; j++) {//parse(null) + 1; j++) {
-            Document pag = null;
-            try {
-                pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + j).get();
-                Elements urls = pag.getElementsByClass("cell cellsong");
+        //parse(null) + 1; j++) {
+        Document pag = null;
+        try {
+            pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).get();
 
-                links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", ""));
+            //  Elements urls = pag.getElementsByClass("cell cellsong");
+            Elements urls = pag.getElementsByClass("cell cellsong");
+            // System.out.println(urls.attr("href"));
+            links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", "") + "\n");
+            //System.out.println(links);
 
 
+        } catch (IOException e) {
 
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
+            e.printStackTrace();
 
         }
+
+
         try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
             // перевод строки в байты
             byte[] buffer = links.toString().getBytes();

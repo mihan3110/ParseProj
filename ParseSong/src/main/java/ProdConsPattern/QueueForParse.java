@@ -54,10 +54,15 @@ public class QueueForParse {
         int pageNumb = Integer.parseInt(words.get(words.size() - 1));
 
 
-        for (int i = 0; i < 4; i++) {
-            Parser parser1 = new Parser(pageNumb, queue);
-            parser1.run();
-           parsers.submit(parser1);
+        for (int i = 1; i <= pageNumb; i++) {
+            Parser parser1 = new Parser(i,queue);
+
+          parsers.submit(new Runnable() {
+              @Override
+              public void run() {
+                  parser1.parsing();
+              }
+          });
         }
         // в циклей от 0 до N
 
