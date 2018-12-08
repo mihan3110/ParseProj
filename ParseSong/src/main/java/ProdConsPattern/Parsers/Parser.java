@@ -41,7 +41,7 @@ public class Parser {
         Document pag = null;
 
         try {
-            System.out.println(numbPage);
+
             pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).get();
 
             Elements urls = pag.getElementsByClass("cell cellsong");
@@ -49,7 +49,6 @@ public class Parser {
             links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", "") + "\n");
 
             //System.out.println(links);
-
 
 
         } catch (IOException e) {
@@ -68,29 +67,22 @@ public class Parser {
             System.out.println(ex.getMessage());
         }*/
 
-  //  }
+        //  }
 
 
-   // public void getText() {
-        Scanner file = null;
-        try {
-            file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        // public void getText() {
 
 
-        while (file.hasNext()) {
-
+        for (int i = 0; i < links.size(); i++) {
 
 
             try {
-                text = Jsoup.connect(file.nextLine()).get();
+                text = Jsoup.connect(links.get(i)).get();
 
                 name.add("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
                 song.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", ""));
 
-
+              
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -98,11 +90,11 @@ public class Parser {
             }
 
         }
-      //  System.out.println(name.get(0));
+
         for (int i = 0; i < name.size(); i++) {
             queue.add(new Song(name.get(i), song.get(i)));
         }
-      //  System.out.println(queue);
+
         try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
             // перевод строки в байты
             byte[] buffer = queue.toString().getBytes();

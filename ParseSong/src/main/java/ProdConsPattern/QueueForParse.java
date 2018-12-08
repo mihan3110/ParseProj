@@ -55,16 +55,20 @@ public class QueueForParse {
 
 
         for (int i = 1; i <= pageNumb; i++) {
+
             Parser parser1 = new Parser(i,queue);
 
           parsers.submit(new Runnable() {
               @Override
               public void run() {
                   parser1.getLinks();
+
                  // parser1.getText();
               }
           });
+
         }
+
         // в циклей от 0 до N
 
         final Analyzer analyzer = new Analyzer(queue);
