@@ -29,7 +29,7 @@ public class Analyzer {
 
     void analizing() {
 
-        System.out.println(queue);
+
 
     }
 }
