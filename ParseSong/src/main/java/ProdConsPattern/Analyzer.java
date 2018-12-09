@@ -28,10 +28,13 @@ public class Analyzer {
 
 
     void analizing() {
-        List<String> lst = new ArrayList<>();
 
+        System.out.println(queue);
 
-        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
+    }
+}
+
+       /* try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
             // перевод строки в байты
             byte[] buffer = sontex.toString().getBytes();
 
@@ -39,10 +42,8 @@ public class Analyzer {
         } catch (IOException ex) {
 
             System.out.println(ex.getMessage());
-        }
+        }*/
 
-    }
-}
 
      /*   // System.out.println(queue);
         for (int str = 0; str < queue.size(); str++) {

@@ -19,9 +19,10 @@ import java.util.regex.Pattern;
 
 public class Parser {
     private final LinkedBlockingQueue<Song> queue;
-    private List<String> links = new ArrayList<>();
+    private Elements links;
 
     private List<String> name = new ArrayList<>();
+    private List<String> genre = new ArrayList<>();
     private List<String> song = new ArrayList<>();
 
 
@@ -36,7 +37,7 @@ public class Parser {
 
     }
 
-    public void getLinks() {
+    public void parse() {
 
         Document pag = null;
 
@@ -44,10 +45,12 @@ public class Parser {
 
             pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).get();
 
-            Elements urls = pag.getElementsByClass("cell cellsong");
+            links = pag.getElementsByClass("cell cellsong");
+       //     System.out.println();
+//.html().replaceAll("<a href=\"", "").replaceAll("\">.+", "") + "\n"
+         //   links.add(urls);
 
-            links.add(urls.html().replaceAll("<a href=\"", "").replaceAll("\">.+", "") + "\n");
-
+           // System.out.println(links.get(0));
             //System.out.println(links);
 
 
@@ -73,16 +76,17 @@ public class Parser {
         // public void getText() {
 
 
-        for (int i = 0; i < links.size(); i++) {
+       for (int i = 0; i < links.size(); i++) {
 
 
             try {
-                text = Jsoup.connect(links.get(i)).get();
+                text = Jsoup.connect(links.get(i).html().replaceAll("<a href=\"", "").replaceAll("\">.+", "")).get();
 
                 name.add("\n" + text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", ""));
                 song.add(text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", ""));
+                genre.add(text.getElementsByClass("genre").tagName("a").text().substring(0,text.getElementsByClass("genre").tagName("a").text().indexOf(",")));
+                //System.out.println(genre);
 
-              
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -91,19 +95,24 @@ public class Parser {
 
         }
 
-        for (int i = 0; i < name.size(); i++) {
-            queue.add(new Song(name.get(i), song.get(i)));
+        for (int i = 0; i < links.size(); i++) {
+            queue.add(new Song(name.get(i), genre.get(i), song.get(i)));
+           // System.out.println(queue);
+
+           /* try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
+                // перевод строки в байты
+                byte[] buffer = queue.toString().getBytes();
+
+                fos.write(buffer, 1, buffer.length - 2);
+            } catch (IOException ex) {
+
+                System.out.println(ex.getMessage());
+            }*/
+
+
         }
 
-        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/test.txt")) {
-            // перевод строки в байты
-            byte[] buffer = queue.toString().getBytes();
 
-            fos.write(buffer, 1, buffer.length - 2);
-        } catch (IOException ex) {
-
-            System.out.println(ex.getMessage());
-        }
 
     }
 }

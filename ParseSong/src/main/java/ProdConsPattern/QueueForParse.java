@@ -61,9 +61,9 @@ public class QueueForParse {
           parsers.submit(new Runnable() {
               @Override
               public void run() {
-                  parser1.getLinks();
+                  parser1.parse();
 
-                 // parser1.getText();
+
               }
           });
 
@@ -72,7 +72,9 @@ public class QueueForParse {
         // в циклей от 0 до N
 
         final Analyzer analyzer = new Analyzer(queue);
+        System.out.println(queue);
        // parser.parsing();
+
         analyzer.analizing();
     }
 
