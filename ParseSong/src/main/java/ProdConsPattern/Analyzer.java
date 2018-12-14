@@ -7,30 +7,80 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 public class Analyzer {
-    private final LinkedBlockingQueue<Song> queue;
+    private final Song queue;
 
-
-    //private final ExecutorService analizers;
-
-
-    //Map<String, Integer> sontex = new LinkedHashMap<String, Integer>();
-    Map<String, Map<String, Integer>> sontex = new LinkedHashMap<>();
-
-
-    public Analyzer(LinkedBlockingQueue<Song> queue) {
-        //  this.analizers = Executors.newFixedThreadPool(4);
-
+    public Analyzer(Song queue) {
         this.queue = queue;
+    }
+
+    void analizing() {
+
+        String text = queue.getText().toLowerCase();
+        Map<String, Integer> count = new HashMap<>();
+
+
+        for (String word : text.split(" ")) {
+            Integer oldCount = count.get(word);
+            if (oldCount == null) {
+                oldCount = 0;
+            }
+            if (word.length() > 3)
+                count.put(word, oldCount + 1);
+
+        }
+
+
+        LinkedHashMap<String, Integer> reverseSortedMap = new LinkedHashMap<>();
+
+
+        count.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
+                .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
+        queue.setText(reverseSortedMap.toString());
+
+        System.out.println(queue);
+
 
     }
 
 
-    void analizing() {
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     /*   //
     }
 }
 
@@ -118,3 +168,55 @@ public class Analyzer {
             Thread.interrupted();
         }*/
 
+
+/////////////////////////////////////////////////////////////
+
+/*
+
+
+        for (int str = 0; str < queue.size(); str++) {
+            LinkedHashMap<String, Integer> occurrences = new LinkedHashMap<String, Integer>();
+
+
+            for (String word : queue.peek().toString().toLowerCase().split(" ")) {
+                Integer oldCount = occurrences.get(word);
+                if (oldCount == null) {
+                    oldCount = 0;
+                }
+                if (word.length() > 3)
+                    occurrences.put(word, oldCount + 1);
+
+            }
+
+            List<Map.Entry<String, Integer>> entries =
+                    new ArrayList<Map.Entry<String, Integer>>(occurrences.entrySet());
+            Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+                public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
+                    return a.getValue().compareTo(b.getValue());
+                }
+            });
+
+            Collections.reverse(entries);
+
+            Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+            for (Map.Entry<String, Integer> entry : entries) {
+                sortedMap.put(entry.getKey(), entry.getValue());
+            }
+            Map<String, Integer> endMap = new LinkedHashMap<String, Integer>();
+
+            endMap.putAll(sortedMap);
+
+
+            sontex.putAll(endMap);
+
+
+
+
+
+            queue.poll();
+
+
+        }
+
+        System.out.println(sontex);
+ */

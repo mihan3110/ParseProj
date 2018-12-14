@@ -21,9 +21,6 @@ public class Parser {
     private final LinkedBlockingQueue<Song> queue;
 
 
-
-
-
     Document text;
     private int numbPage;
 
@@ -35,22 +32,22 @@ public class Parser {
 
     }
 
-    private String getSongName(Document text){
-        String name="\n"+text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", "");
+    private String getSongName(Document text) {
+        String name = text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", "").trim();
         return name;
     }
 
-    private String getSongText(Document text){
-        String  song=text.getElementsByClass("songtext").text().replaceAll("[!^+*/.>_<#,\\-$%“”@&)…(\"\\]«—\\[»]", "");
+    private String getSongText(Document text) {
+        String song = text.getElementsByClass("songtext").text().replaceAll("[!^+*?/.>_<#,$%“”@&)…(\"\\]«—\\[»]", "").trim();
         return song;
     }
 
-    private String getSongGenre(Document text){
-        String genre=text.getElementsByClass("genre").tagName("a").text().substring(0,text.getElementsByClass("genre").tagName("a").text().indexOf(","));
+    private String getSongGenre(Document text) {
+        String genre = text.getElementsByClass("genre").tagName("a").text().substring(0, text.getElementsByClass("genre").tagName("a").text().indexOf(",")).trim();
         return genre;
     }
-    public void parse() {
 
+    public void parse() {
 
 
         try {
@@ -59,12 +56,12 @@ public class Parser {
 
             Elements links = pag.getElementsByClass("cell cellsong");
 
+
             for (int i = 0; i < links.size(); i++) {
 
                 Element link = links.get(i).select("a").first();
                 try {
                     text = Jsoup.connect(link.attr("abs:href")).get();
-
 
 
                     queue.add(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
@@ -83,83 +80,7 @@ public class Parser {
             e.printStackTrace();
 
         }
-        try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t5.txt")) {
-            // перевод строки в байты
-            byte[] buffer = queue.toString().getBytes();
 
-            fos.write(buffer, 1, buffer.length - 2);
-        } catch (IOException ex) {
-
-            System.out.println(ex.getMessage());
-        }
-      //  System.out.println(queue);
     }
 }
 
-///запись в файл
-
- /* try (FileOutputStream fos = new FileOutputStream("C://Users/Михаил/Desktop/tets/tes2t.txt")) {
-            // перевод строки в байты
-            byte[] buffer = links.toString().getBytes();
-
-            fos.write(buffer, 1, buffer.length - 2);
-        } catch (IOException ex) {
-
-            System.out.println(ex.getMessage());
-        }*/
-
-//parse(null) + 1; j++) {
-
-
-
-       /* Scanner file = null;
-        try {
-            file = new Scanner(new File("C://Users/Михаил/Desktop/tets/tes2t.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
-
-
-
-
-
-        /*for (int i = 0; i < 1; i++) {
-            final Thread parser = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    while (!stop.get()) {
-
-
-
-
-                    }
-
-                    System.out.println("========================================");
-                }
-            });
-            this.parsers.submit(parser);
-            Thread.interrupted();
-        }*/
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-НОВИНКИ
-В ней находим количество страниц для просмотра
-в каждой странице достаю каждую песню
-берем новинки
-1- всего старниц
-2-
-*/

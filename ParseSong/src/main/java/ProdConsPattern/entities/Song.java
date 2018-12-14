@@ -16,19 +16,12 @@ public class Song {
 
     @Override
     public String toString() {
-        return "Song{" +
-
-                ", name='" + name + '\'' +
+        return " Song{" +
+                "name='" + name + '\'' +
                 ", genre='" + genre + '\'' +
-                "text='" + text + '\'' +
-                '}';
+                ", text='" + text + '\'' +
+                '}' + "\n";
     }
-
-    public String getGenre() {
-        return genre;
-    }
-
-
 
     public String getText() {
         return text;
@@ -46,5 +39,11 @@ public class Song {
         this.name = name;
     }
 
+    public String getGenre() {
+        return genre;
+    }
 
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 }
