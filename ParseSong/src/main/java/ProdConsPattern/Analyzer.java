@@ -10,16 +10,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class Analyzer {
-    private final Song queue;
+    private final Song song;
 
-    public Analyzer(Song queue) {
-        this.queue = queue;
+    public Analyzer(Song song) {
+        this.song = song;
     }
 
     void analizing() {
 
-        String text = queue.getText().toLowerCase();
+        String text = song.getText().toLowerCase();
         Map<String, Integer> count = new HashMap<>();
+
 
 
         for (String word : text.split(" ")) {
@@ -41,9 +42,10 @@ public class Analyzer {
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .limit(10)
                 .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
-        queue.setText(reverseSortedMap.toString());
+        song.setText(reverseSortedMap.toString());
 
-        System.out.println(queue);
+     //  System.out.println(song);
+
 
 
     }

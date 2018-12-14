@@ -44,20 +44,20 @@ public class QueueForParse {
 
             //  parsers.submit(parser1::parse);
             Future<?> submit = parsers.submit(parser1::parse);
+            //System.out.println(queue.size());
 
 
         }
 
 
-        // в циклей от 0 до N
-
-
         while (!queue.isEmpty()) {
+
             Analyzer analyzer1 = new Analyzer(queue.peek());
 
 
             Future<?> submit = analizers.submit(analyzer1::analizing);
-            queue.poll();
+
+queue.poll();
         }
 
 
@@ -69,6 +69,7 @@ public class QueueForParse {
             }
             System.out.println(excp);
         });
+
     }
 
 

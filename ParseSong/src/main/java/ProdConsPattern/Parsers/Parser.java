@@ -21,6 +21,7 @@ public class Parser {
     private final LinkedBlockingQueue<Song> queue;
 
 
+
     Document text;
     private int numbPage;
 
@@ -80,6 +81,7 @@ public class Parser {
             e.printStackTrace();
 
         }
+
 
     }
 }
