@@ -10,13 +10,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class Analyzer {
-    private final Song song;
+    private final LinkedBlockingQueue<Song> queue;
 
-    public Analyzer(Song song) {
-        this.song = song;
+
+    public Analyzer(LinkedBlockingQueue<Song> queue) {
+        this.queue = queue;
     }
 
     void analizing() {
+
+        //System.out.println(queue.size());
+       /*
+        try {
+            Song song = queue.take();
 
         String text = song.getText().toLowerCase();
         Map<String, Integer> count = new HashMap<>();
@@ -43,8 +49,10 @@ public class Analyzer {
                 .limit(10)
                 .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
         song.setText(reverseSortedMap.toString());
-
-     //  System.out.println(song);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+      //System.out.println(song.getName());
 
 
 

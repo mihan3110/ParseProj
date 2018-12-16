@@ -69,18 +69,22 @@ public class Parser {
 
                 } catch (IOException e) {
 
+                    System.out.println(2222222);
                     e.printStackTrace();
 
                 }
-
+               // System.out.println(  Thread.currentThread().getName());
+              //  System.out.println(queue.size());
             }
 
 
         } catch (IOException e) {
-
+            System.out.println(1111111);
             e.printStackTrace();
 
         }
+       // System.out.println(queue.size());
+        //System.out.println("________________________________________________________");
 
 
     }
