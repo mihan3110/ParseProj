@@ -53,9 +53,10 @@ public class Parser {
 
         try {
 
-            Document pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).get();
+            Document pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).userAgent("Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.4 Safari/537.36").timeout(500).get();
 
             Elements links = pag.getElementsByClass("cell cellsong");
+
 
 
             for (int i = 0; i < links.size(); i++) {
@@ -74,9 +75,9 @@ public class Parser {
 
                 }
                // System.out.println(  Thread.currentThread().getName());
-              //  System.out.println(queue.size());
+              //
             }
-
+         //   System.out.println(queue.size());
 
         } catch (IOException e) {
             System.out.println(1111111);
