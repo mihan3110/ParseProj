@@ -18,12 +18,10 @@ import org.jsoup.select.Elements;
 public class QueueForParse {
     private final LinkedBlockingQueue<Song> queue;
     private final ExecutorService parsers = Executors.newFixedThreadPool(4);
-    private final ExecutorService analizers = Executors.newFixedThreadPool(4);
 
 
 
     QueueForParse() {
-
 
         this.queue = new LinkedBlockingQueue<>();
 
@@ -34,41 +32,17 @@ public class QueueForParse {
         //final Parser parser = new Parser(queue);
 
 
-
-
         List<Future> excp = new ArrayList<>();
 
         for (int i = 1; i <= getPagesCount(); i++) {
 
             Parser parser1 = new Parser(i, queue);
 
-             // parsers.submit(parser1::parse);
+              // parsers.submit(parser1::parse);
             Future<?> submit = parsers.submit(parser1::parse);
 
 
-
-
-          System.out.println(queue.size());
-
-
         }
-       // System.out.println(queue.size());
-
-
-        Analyzer analyzer1;
-        analyzer1 = new Analyzer(queue);
-        Future<?> submit1 = analizers.submit(analyzer1::analizing);
-           // System.out.println(queue);
-
-
-
-
-
-
-
-
-
-
 
 
         excp.forEach(it -> {
@@ -79,8 +53,10 @@ public class QueueForParse {
             }
             System.out.println(excp);
         });
-        System.out.println("________________________________________");
-        System.out.println(excp);
+
+        System.out.println("Excp: "+excp);
+
+
     }
 
 

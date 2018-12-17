@@ -1,5 +1,6 @@
 package ProdConsPattern.Parsers;
 
+import ProdConsPattern.Analyzer;
 import ProdConsPattern.entities.Song;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,8 +21,7 @@ import java.util.regex.Pattern;
 public class Parser {
     private final LinkedBlockingQueue<Song> queue;
 
-
-
+    private final ExecutorService analizers = Executors.newFixedThreadPool(4);
     Document text;
     private int numbPage;
 
@@ -32,6 +32,7 @@ public class Parser {
         this.queue = queue;
 
     }
+
 
     private String getSongName(Document text) {
         String name = text.getElementsByTag("h1").tagName("a").text().replaceAll("текст песни", "").trim();
@@ -48,15 +49,20 @@ public class Parser {
         return genre;
     }
 
+
+
+    public void setQueue(Song song) {
+        queue.add(song);
+    }
+
     public void parse() {
 
 
         try {
 
-            Document pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).userAgent("Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.4 Safari/537.36").timeout(500).get();
+            Document pag = Jsoup.connect("http://muzoton.ru/lastnews/page/" + numbPage).userAgent("Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.4 Safari/537.36").get();
 
             Elements links = pag.getElementsByClass("cell cellsong");
-
 
 
             for (int i = 0; i < links.size(); i++) {
@@ -65,8 +71,8 @@ public class Parser {
                 try {
                     text = Jsoup.connect(link.attr("abs:href")).get();
 
+                    setQueue(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
 
-                    queue.add(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
 
                 } catch (IOException e) {
 
@@ -74,19 +80,26 @@ public class Parser {
                     e.printStackTrace();
 
                 }
-               // System.out.println(  Thread.currentThread().getName());
-              //
             }
-         //   System.out.println(queue.size());
+
+
 
         } catch (IOException e) {
             System.out.println(1111111);
             e.printStackTrace();
 
         }
-       // System.out.println(queue.size());
-        //System.out.println("________________________________________________________");
 
+        while (!queue.isEmpty()) {
+            try {
+                Analyzer analyzer1 = new Analyzer(queue.take());
+                Future<?> submit1 = analizers.submit(analyzer1::analizing);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        }
 
     }
 }
