@@ -20,6 +20,7 @@ public class QueueForParse {
     private final ExecutorService parsers = Executors.newFixedThreadPool(4);
 
 
+    private final ExecutorService analizers = Executors.newFixedThreadPool(4);
 
     QueueForParse() {
 
@@ -28,7 +29,7 @@ public class QueueForParse {
     }
 
 
-    public void start() {
+    public void start() throws InterruptedException {
         //final Parser parser = new Parser(queue);
 
 
@@ -38,11 +39,18 @@ public class QueueForParse {
 
             Parser parser1 = new Parser(i, queue);
 
-              // parsers.submit(parser1::parse);
-            Future<?> submit = parsers.submit(parser1::parse);
 
+            Future<?> submit = parsers.submit(parser1::parse);
+            //Аналзируем очередь после каждой прогонки по странице парсером
+            Analyzer analyzer1 = new Analyzer(queue);
+            Future<?> submit1 = analizers.submit(analyzer1::analizing);
 
         }
+        parsers.shutdown();
+analizers.shutdown();
+
+
+
 
 
         excp.forEach(it -> {
@@ -54,7 +62,6 @@ public class QueueForParse {
             System.out.println(excp);
         });
 
-        System.out.println("Excp: "+excp);
 
 
     }
@@ -73,7 +80,7 @@ public class QueueForParse {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         QueueForParse begin = new QueueForParse();
         begin.start();
 

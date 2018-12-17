@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class Parser {
     private final LinkedBlockingQueue<Song> queue;
 
-    private final ExecutorService analizers = Executors.newFixedThreadPool(4);
+
     Document text;
     private int numbPage;
 
@@ -51,12 +51,9 @@ public class Parser {
 
 
 
-    public void setQueue(Song song) {
-        queue.add(song);
-    }
+
 
     public void parse() {
-
 
         try {
 
@@ -68,38 +65,34 @@ public class Parser {
             for (int i = 0; i < links.size(); i++) {
 
                 Element link = links.get(i).select("a").first();
+
                 try {
                     text = Jsoup.connect(link.attr("abs:href")).get();
 
-                    setQueue(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
+                   queue.put(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
 
 
                 } catch (IOException e) {
 
-                    System.out.println(2222222);
+                    System.out.println("error");
                     e.printStackTrace();
 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
             }
+
 
 
 
         } catch (IOException e) {
-            System.out.println(1111111);
+            System.out.println("error");
             e.printStackTrace();
 
         }
 
-        while (!queue.isEmpty()) {
-            try {
-                Analyzer analyzer1 = new Analyzer(queue.take());
-                Future<?> submit1 = analizers.submit(analyzer1::analizing);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-
-        }
 
     }
 }
