@@ -66,7 +66,7 @@ public class Parser {
             connection = DbConnect.getConnection();
 
             em = new EntityManager(connection);
-            System.out.println(links.size()+"\n__________");
+
             for (int i = 0; i < links.size(); i++) {
 
                 Element link = links.get(i).select("a").first();
@@ -79,7 +79,7 @@ Song song = new Song(getSongName(text), getSongGenre(text), getSongText(text));
 song.setLink(link.attr("abs:href"));
 
                     queue.put(song);
-
+                System.out.println(queue.size());
 
 
 

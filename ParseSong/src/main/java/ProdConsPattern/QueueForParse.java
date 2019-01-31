@@ -41,13 +41,13 @@ public class QueueForParse {
             Future<?> submit = parsers.submit(parser1::parse);
 
             //Аналзируем очередь после каждой прогонки по странице парсером
-            Analyzer analyzer1 = new Analyzer(queue);
-
-            Future<?> submit1 = analizers.submit(analyzer1::analizing);
+//            Analyzer analyzer1 = new Analyzer(queue);
+//            Future<?> submit1 = analizers.submit(analyzer1::analizing);
 
         }
-        parsers.shutdown();
-        analizers.shutdown();
+
+      //  parsers.shutdown();
+        //analizers.shutdown();
 
 
         excp.forEach(it -> {
