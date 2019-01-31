@@ -66,8 +66,9 @@ try {
                     .limit(10)
                     .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
             song.setTop(reverseSortedMap.toString());
+Song sn = new Song(song.getText(), song.getName(), song.getGenre(), song.getTop(), song.getLink());
+        em.persist(sn);
 
-        em.persist(song);
 
     }
 }

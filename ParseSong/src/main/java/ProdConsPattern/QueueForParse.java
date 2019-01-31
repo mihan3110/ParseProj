@@ -17,7 +17,7 @@ public class QueueForParse {
     private final ExecutorService parsers = Executors.newFixedThreadPool(4);
 
 
-    private final ExecutorService analizers = Executors.newFixedThreadPool(4);
+
 
 
     QueueForParse() {
@@ -41,13 +41,11 @@ public class QueueForParse {
             Future<?> submit = parsers.submit(parser1::parse);
 
             //Аналзируем очередь после каждой прогонки по странице парсером
-//            Analyzer analyzer1 = new Analyzer(queue);
-//            Future<?> submit1 = analizers.submit(analyzer1::analizing);
+
 
         }
 
-      //  parsers.shutdown();
-        //analizers.shutdown();
+     parsers.shutdown();
 
 
         excp.forEach(it -> {

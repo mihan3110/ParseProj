@@ -27,6 +27,14 @@ public class Song {
 
     }
 
+    public Song(String text, String name, String genre, String top, String link) {
+        this.text = text;
+        this.name = name;
+        this.genre = genre;
+        this.top = top;
+        this.link = link;
+    }
+
     public Song(String name, String genre, String text) {
 
         this.name = name;
