@@ -1,21 +1,14 @@
 package ProdConsPattern.Parsers;
 
-import ProdConsPattern.Analyzer;
+
 import ProdConsPattern.entities.Song;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class Parser {
@@ -62,31 +55,25 @@ public class Parser {
             Elements links = pag.getElementsByClass("cell cellsong");
 
 
+
             for (int i = 0; i < links.size(); i++) {
 
                 Element link = links.get(i).select("a").first();
 
-                try {
+
                     text = Jsoup.connect(link.attr("abs:href")).get();
+Song song = new Song(getSongName(text), getSongGenre(text), getSongText(text));
+                    queue.put(song);
 
-                   queue.put(new Song(getSongName(text), getSongGenre(text), getSongText(text)));
 
 
-                } catch (IOException e) {
-
-                    System.out.println("error");
-                    e.printStackTrace();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
             }
 
 
 
 
-        } catch (IOException e) {
+        } catch (IOException |InterruptedException e) {
             System.out.println("error");
             e.printStackTrace();
 
@@ -96,4 +83,3 @@ public class Parser {
 
     }
 }
-

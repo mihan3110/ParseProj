@@ -1,19 +1,16 @@
 package ProdConsPattern;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ProdConsPattern.Parsers.Parser;
 import ProdConsPattern.entities.Song;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class QueueForParse {
     private final LinkedBlockingQueue<Song> queue;
@@ -21,6 +18,7 @@ public class QueueForParse {
 
 
     private final ExecutorService analizers = Executors.newFixedThreadPool(4);
+
 
     QueueForParse() {
 
@@ -41,16 +39,15 @@ public class QueueForParse {
 
 
             Future<?> submit = parsers.submit(parser1::parse);
+
             //Аналзируем очередь после каждой прогонки по странице парсером
             Analyzer analyzer1 = new Analyzer(queue);
+
             Future<?> submit1 = analizers.submit(analyzer1::analizing);
 
         }
         parsers.shutdown();
-analizers.shutdown();
-
-
-
+        analizers.shutdown();
 
 
         excp.forEach(it -> {
@@ -61,7 +58,6 @@ analizers.shutdown();
             }
             System.out.println(excp);
         });
-
 
 
     }
@@ -85,6 +81,8 @@ analizers.shutdown();
         begin.start();
 
 
+
     }
+
 
 }

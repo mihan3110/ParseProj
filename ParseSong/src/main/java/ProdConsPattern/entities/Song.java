@@ -1,26 +1,41 @@
 package ProdConsPattern.entities;
 
+
+import myOrmTest.annotations.Column;
+import myOrmTest.annotations.Entity;
+import myOrmTest.annotations.Id;
+
+@Entity(name = "songs")
 public class Song {
+
+    @Id
+    private Long id;
+    @Column(name = "text", length = 10000)
     private String text;
+    @Column(name = "name", length = 300)
     private String name;
+    @Column(name = "genre", length = 100)
     private String genre;
+    @Column(name = "top", length = 1000)
+    private String top;
 
-
-    public Song(String name, String genre, String text) {
-        this.text = text;
-        this.name = name;
-        this.genre = genre;
+    public Song(){
 
     }
 
+    public Song(String name, String genre, String text) {
 
-    @Override
-    public String toString() {
-        return " Song{" +
-                "name='" + name + '\'' +
-                ", genre='" + genre + '\'' +
-                ", text='" + text + '\'' +
-                '}' + "\n";
+        this.name = name;
+        this.genre = genre;
+        this.text = text;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getText() {
@@ -45,5 +60,13 @@ public class Song {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getTop() {
+        return top;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
     }
 }
