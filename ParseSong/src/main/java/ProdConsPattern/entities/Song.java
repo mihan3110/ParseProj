@@ -19,7 +19,11 @@ public class Song {
     @Column(name = "top", length = 1000)
     private String top;
 
-    public Song(){
+
+    @Column(name = "link", length = 1000)
+    private String link;
+
+    public Song() {
 
     }
 
@@ -28,6 +32,14 @@ public class Song {
         this.name = name;
         this.genre = genre;
         this.text = text;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public Long getId() {

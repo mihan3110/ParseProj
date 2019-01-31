@@ -2,12 +2,16 @@ package ProdConsPattern.Parsers;
 
 
 import ProdConsPattern.entities.Song;
+import myOrmTest.db.DbConnect;
+import myOrmTest.db.EntityManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
@@ -47,6 +51,9 @@ public class Parser {
 
 
     public void parse() {
+        EntityManager em = null;
+        Connection connection = null;
+
 
         try {
 
@@ -54,15 +61,23 @@ public class Parser {
 
             Elements links = pag.getElementsByClass("cell cellsong");
 
+            DbConnect.initConnection("mysql", "root", "123456", "localhost", "3306", "myParser");
 
+            connection = DbConnect.getConnection();
 
+            em = new EntityManager(connection);
+            System.out.println(links.size()+"\n__________");
             for (int i = 0; i < links.size(); i++) {
 
                 Element link = links.get(i).select("a").first();
+               // System.out.println(link.html());
 
 
                     text = Jsoup.connect(link.attr("abs:href")).get();
+
 Song song = new Song(getSongName(text), getSongGenre(text), getSongText(text));
+song.setLink(link.attr("abs:href"));
+
                     queue.put(song);
 
 
@@ -73,7 +88,7 @@ Song song = new Song(getSongName(text), getSongGenre(text), getSongText(text));
 
 
 
-        } catch (IOException |InterruptedException e) {
+        } catch (IOException |InterruptedException | SQLException e) {
             System.out.println("error");
             e.printStackTrace();
 

@@ -23,7 +23,7 @@ public class Analyzer {
 
     public void analizing() {
 
-        EntityManager em = null;
+       EntityManager em = null;
         Connection connection = null;
 
 
